@@ -6,7 +6,7 @@ Aplikasi inventaris barang untuk PHP Native 8+, PDO, MySQL, Bootstrap 5, dan Jav
 
 1. Letakkan folder proyek di `C:\xampp\htdocs\inventory`.
 2. Jalankan Apache dan MySQL dari XAMPP Control Panel.
-3. Buka phpMyAdmin, pilih **Import**, lalu impor `database.sql`. SQL membuat database `db_inventory`, tabel `users`, `kategori`, `barang`, serta kategori awal. Tidak ada akun bawaan; akun pertama dibuat melalui halaman registrasi. Script memakai `CREATE TABLE IF NOT EXISTS` dan tidak menghapus data barang yang sudah ada.
+3. Buka phpMyAdmin, pilih **Import**, lalu impor `database.sql`. SQL membuat database `db_inventory`, tabel `users`, `kategori`, `barang`, serta kategori awal. Tidak ada akun bawaan; akun pertama dibuat melalui halaman registrasi. Tabel `barang` menyimpan `id_user`, sehingga data setiap akun terpisah. Jika database lama sudah memiliki tabel `barang` tanpa kolom `id_user`, hapus tabel `barang` lama lalu impor ulang `database.sql`.
 4. Periksa [config/database.php](./config/database.php). Nilai default XAMPP: host `localhost`, database `db_inventory`, user `root`, password kosong, port `3306`, charset `utf8mb4`. Nilai dapat dioverride melalui environment variable `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, dan `DB_PORT`.
 5. Jika tabel lama Anda berada di database bernama `database`, ubah `DB_NAME` menjadi `database` dan ubah perintah `USE db_inventory;` di `database.sql` menjadi `USE \`database\`;` sebelum mengimpor. SQL tidak menghapus tabel/barang lama; tabel `users` dan kategori akan ditambahkan jika belum ada.
 6. Pastikan PHP mengaktifkan `PDO_MYSQL` dan `fileinfo`. Untuk pesan teknis koneksi hanya di komputer pengembangan, set environment `APP_ENV=development`. Jangan aktifkan mode ini pada server publik. Default aman tidak menampilkan detail exception ke pengguna.
@@ -38,6 +38,7 @@ Aplikasi tidak menyimpan akun atau kredensial bawaan di kode, SQL, maupun antarm
 ## Fitur
 
 - Registrasi akun, login session, proteksi CSRF, dan pembatasan percobaan login.
+- Isolasi data per akun: setiap pengguna hanya melihat, mengubah, dan menghapus barang miliknya (`barang.id_user`). Akun baru selalu mulai dengan data kosong.
 - Sidebar responsif, dashboard, breadcrumb, notifikasi toast, avatar pengguna, dan halaman login satu kolom.
 - CRUD barang dengan validasi server, kode unik, stok/harga nonnegatif, kategori, dan foto.
 - Grid/tabel responsif, pencarian nama/kode, filter kategori yang diterapkan saat kategori dipilih, pagination, status stok, dan empty state.
@@ -49,6 +50,7 @@ Aplikasi tidak menyimpan akun atau kredensial bawaan di kode, SQL, maupun antarm
 
 - [ ] Impor `database.sql`; pastikan tabel `users`, `kategori`, `barang` dan kategori awal tersedia.
 - [ ] Daftar akun baru; pastikan username duplikat, password pendek, konfirmasi tidak sama, dan field kosong ditolak.
+- [ ] Daftar dua akun berbeda; pastikan akun kedua tidak melihat barang akun pertama, dan akun baru mulai dengan dashboard/laporan kosong.
 - [ ] Login dengan akun yang dibuat; pastikan masuk ke dashboard.
 - [ ] Uji username salah dan password salah; pesan tetap sama, lalu uji penguncian setelah lima percobaan dan pemulihan setelah lima menit.
 - [ ] Buka `dashboard.php`, `laporan.php`, dan setiap halaman `barang/*` tanpa login; pastikan diarahkan ke login.
