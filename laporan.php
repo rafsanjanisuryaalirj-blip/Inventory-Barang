@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/barang.php';
 requireLogin();
+$userId = currentUserId();
 
 $pageTitle = 'Laporan';
 $currentPage = 'report';
@@ -17,7 +18,7 @@ try {
     require __DIR__ . '/config/database.php';
     $categories = daftarKategori($pdo);
     $idKategori = $categoryId !== '' && ctype_digit($categoryId) && (int) $categoryId > 0 ? (int) $categoryId : null;
-    $barangList = ambilSemuaBarang($pdo, $idKategori);
+    $barangList = ambilSemuaBarang($pdo, $userId, $idKategori);
     $totals = hitungTotalBarang($barangList);
 } catch (PDOException $exception) {
     error_log('Gagal memuat laporan: ' . $exception->getMessage());

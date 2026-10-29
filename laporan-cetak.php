@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/barang.php';
 requireLogin();
+$userId = currentUserId();
 
 $categoryId = inputText($_GET['kategori'] ?? null);
 $kategoriNama = '';
@@ -12,7 +13,7 @@ try {
     require __DIR__ . '/config/database.php';
 
     $idKategori = $categoryId !== '' && ctype_digit($categoryId) && (int) $categoryId > 0 ? (int) $categoryId : null;
-    $barangList = ambilSemuaBarang($pdo, $idKategori);
+    $barangList = ambilSemuaBarang($pdo, $userId, $idKategori);
     if ($idKategori !== null) {
         $kategoriNama = namaKategori($pdo, $idKategori);
     }

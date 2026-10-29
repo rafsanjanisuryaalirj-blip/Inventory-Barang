@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
 requireLogin();
+$userId = currentUserId();
 
 $pageTitle = 'Dashboard';
 $currentPage = 'dashboard';
@@ -13,19 +14,39 @@ $loadError = null;
 
 try {
     require __DIR__ . '/config/database.php';
-    $stats['items'] = (int) $pdo->query('SELECT COUNT(*) FROM barang')->fetchColumn();
-    $stats['stock'] = (int) $pdo->query('SELECT COALESCE(SUM(stok), 0) FROM barang')->fetchColumn();
-    $stats['value'] = (float) $pdo->query('SELECT COALESCE(SUM(stok * harga), 0) FROM barang')->fetchColumn();
-    $stats['low'] = (int) $pdo->query('SELECT COUNT(*) FROM barang WHERE stok <= 5')->fetchColumn();
-    $recentItems = $pdo->query(
+
+    $statStatement = $pdo->prepare(
+        'SELECT COUNT(*) AS items,
+                COALESCE(SUM(stok), 0) AS stock,
+                COALESCE(SUM(stok * harga), 0) AS value,
+                COALESCE(SUM(CASE WHEN stok <= 5 THEN 1 ELSE 0 END), 0) AS low
+         FROM barang WHERE id_user = :user'
+    );
+    $statStatement->execute([':user' => $userId]);
+    $statRow = $statStatement->fetch();
+    $stats = [
+        'items' => (int) $statRow['items'],
+        'stock' => (int) $statRow['stock'],
+        'value' => (float) $statRow['value'],
+        'low' => (int) $statRow['low'],
+    ];
+
+    $recentStatement = $pdo->prepare(
         'SELECT b.id_barang, b.kode_barang, b.nama_barang, b.stok, b.satuan, b.harga, b.foto, k.nama_kategori
          FROM barang b INNER JOIN kategori k ON k.id_kategori = b.id_kategori
+         WHERE b.id_user = :user
          ORDER BY b.created_at DESC, b.id_barang DESC LIMIT 5'
-    )->fetchAll();
-    $lowStockItems = $pdo->query(
+    );
+    $recentStatement->execute([':user' => $userId]);
+    $recentItems = $recentStatement->fetchAll();
+
+    $lowStatement = $pdo->prepare(
         'SELECT id_barang, kode_barang, nama_barang, stok, satuan
-         FROM barang WHERE stok <= 5 ORDER BY stok ASC, nama_barang ASC LIMIT 6'
-    )->fetchAll();
+         FROM barang WHERE id_user = :user AND stok <= 5
+         ORDER BY stok ASC, nama_barang ASC LIMIT 6'
+    );
+    $lowStatement->execute([':user' => $userId]);
+    $lowStockItems = $lowStatement->fetchAll();
 } catch (PDOException $exception) {
     error_log('Gagal memuat dashboard: ' . $exception->getMessage());
     $loadError = databaseErrorMessage($exception, 'Dashboard gagal dimuat. Periksa konfigurasi dan tabel database.');

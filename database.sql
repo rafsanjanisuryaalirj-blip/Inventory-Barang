@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS kategori (
 
 CREATE TABLE IF NOT EXISTS barang (
     id_barang INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    id_user INT UNSIGNED NOT NULL,
     kode_barang VARCHAR(20) NOT NULL,
     nama_barang VARCHAR(150) NOT NULL,
     id_kategori INT UNSIGNED NOT NULL,
@@ -39,9 +40,13 @@ CREATE TABLE IF NOT EXISTS barang (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id_barang),
-    UNIQUE KEY uq_barang_kode (kode_barang),
+    UNIQUE KEY uq_barang_user_kode (id_user, kode_barang),
     KEY idx_barang_nama (nama_barang),
     KEY idx_barang_kategori (id_kategori),
+    CONSTRAINT fk_barang_user
+        FOREIGN KEY (id_user) REFERENCES users (id_user)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT fk_barang_kategori
         FOREIGN KEY (id_kategori) REFERENCES kategori (id_kategori)
         ON UPDATE CASCADE

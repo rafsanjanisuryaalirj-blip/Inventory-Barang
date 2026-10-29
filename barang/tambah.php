@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/barang.php';
 requireLogin();
+$userId = currentUserId();
 
 $pageTitle = 'Tambah Barang';
 $currentPage = 'add';
@@ -28,7 +29,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $errors['form'] = 'Sesi formulir tidak valid. Muat ulang halaman dan coba kembali.';
     } else {
         try {
-            $errors = validateBarang($_POST, $pdo);
+            $errors = validateBarang($_POST, $pdo, $userId);
         } catch (PDOException $exception) {
             error_log('Gagal memvalidasi barang baru: ' . $exception->getMessage());
             $errors['form'] = databaseErrorMessage($exception, 'Validasi gagal karena terjadi kesalahan database. Silakan coba kembali.');
@@ -42,7 +43,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $newPhoto = null;
         try {
             $newPhoto = uploadFoto($_FILES['foto']);
-            tambahBarang($pdo, $values, $newPhoto);
+            tambahBarang($pdo, $userId, $values, $newPhoto);
             setFlash('success', 'Barang berhasil ditambahkan.');
             redirect(appUrl('/barang/index.php'));
         } catch (RuntimeException $exception) {

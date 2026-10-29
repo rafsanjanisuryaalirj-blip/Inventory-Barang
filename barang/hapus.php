@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/barang.php';
 requireLogin();
+$userId = currentUserId();
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(405);
@@ -23,7 +24,7 @@ if ($id === false || $id === null || $id < 1) {
 
 try {
     require dirname(__DIR__) . '/config/database.php';
-    $foto = hapusBarang($pdo, $id);
+    $foto = hapusBarang($pdo, $id, $userId);
     if ($foto === null) {
         setFlash('warning', 'Barang tidak ditemukan.');
     } elseif (!removeFoto($foto)) {

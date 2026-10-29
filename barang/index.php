@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/auth.php';
 requireLogin();
+$userId = currentUserId();
 
 $pageTitle = 'Data Barang';
 $currentPage = 'list';
@@ -21,8 +22,8 @@ try {
     require dirname(__DIR__) . '/config/database.php';
     $categories = $pdo->query('SELECT id_kategori, nama_kategori FROM kategori ORDER BY nama_kategori')->fetchAll();
 
-    $conditions = [];
-    $parameters = [];
+    $conditions = ['b.id_user = :user'];
+    $parameters = [':user' => $userId];
     if ($search !== '') {
         $conditions[] = '(b.nama_barang LIKE :search_nama OR b.kode_barang LIKE :search_kode)';
         $parameters[':search_nama'] = '%' . $search . '%';

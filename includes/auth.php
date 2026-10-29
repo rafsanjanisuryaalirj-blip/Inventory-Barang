@@ -9,6 +9,12 @@ function currentUser(): ?array
     return is_array($user) ? $user : null;
 }
 
+function currentUserId(): int
+{
+    $user = currentUser();
+    return (int) ($user['id_user'] ?? 0);
+}
+
 function requireLogin(): void
 {
     if (currentUser() === null) {

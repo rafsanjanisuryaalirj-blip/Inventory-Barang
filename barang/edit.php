@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/barang.php';
 requireLogin();
+$userId = currentUserId();
 $id = filter_var($_GET['id'] ?? $_POST['id_barang'] ?? null, FILTER_VALIDATE_INT);
 if ($id === false || $id === null || $id < 1) {
     setFlash('warning', 'ID barang tidak valid.');
@@ -16,7 +17,7 @@ $categories = [];
 $databaseError = null;
 try {
     require dirname(__DIR__) . '/config/database.php';
-    $barang = cariBarang($pdo, $id);
+    $barang = cariBarang($pdo, $id, $userId);
     $categories = daftarKategori($pdo);
 } catch (PDOException $exception) {
     error_log('Gagal menyiapkan edit barang: ' . $exception->getMessage());
@@ -39,7 +40,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && $barang !== null && $pdo
         $errors['form'] = 'Sesi formulir tidak valid. Muat ulang halaman dan coba kembali.';
     } else {
         try {
-            $errors = validateBarang($_POST, $pdo, (int) $id);
+            $errors = validateBarang($_POST, $pdo, $userId, (int) $id);
         } catch (PDOException $exception) {
             error_log('Gagal memvalidasi perubahan barang: ' . $exception->getMessage());
             $errors['form'] = databaseErrorMessage($exception, 'Validasi gagal karena terjadi kesalahan database. Silakan coba kembali.');
@@ -53,7 +54,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && $barang !== null && $pdo
             if ($hasNewPhoto) {
                 $newPhoto = uploadFoto($_FILES['foto']);
             }
-            ubahBarang($pdo, $id, $values, $newPhoto ?? $currentPhoto);
+            ubahBarang($pdo, $id, $userId, $values, $newPhoto ?? $currentPhoto);
             if ($newPhoto !== null && !removeFoto($currentPhoto)) {
                 setFlash('warning', 'Data berhasil diperbarui, tetapi foto lama gagal dihapus. Hapus secara manual dari img/barang/.');
             } else {

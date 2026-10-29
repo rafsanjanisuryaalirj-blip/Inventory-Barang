@@ -188,7 +188,7 @@ function removeFoto(?string $filename): bool
     return !is_file($path) || unlink($path);
 }
 
-function validateBarang(array $input, PDO $pdo, ?int $barangId = null): array
+function validateBarang(array $input, PDO $pdo, int $userId, ?int $barangId = null): array
 {
     $errors = [];
     $kode = inputText($input['kode_barang'] ?? null);
@@ -204,8 +204,8 @@ function validateBarang(array $input, PDO $pdo, ?int $barangId = null): array
     } elseif (!preg_match('/^[A-Za-z0-9._-]+$/', $kode)) {
         $errors['kode_barang'] = 'Kode hanya boleh berisi huruf, angka, titik, garis bawah, dan tanda hubung.';
     } else {
-        $sql = 'SELECT COUNT(*) FROM barang WHERE kode_barang = :kode';
-        $params = [':kode' => $kode];
+        $sql = 'SELECT COUNT(*) FROM barang WHERE kode_barang = :kode AND id_user = :user';
+        $params = [':kode' => $kode, ':user' => $userId];
         if ($barangId !== null) {
             $sql .= ' AND id_barang <> :id';
             $params[':id'] = $barangId;

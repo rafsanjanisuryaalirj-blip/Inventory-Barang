@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/includes/auth.php';
 require_once dirname(__DIR__) . '/includes/barang.php';
 requireLogin();
+$userId = currentUserId();
 
 $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
 $barang = null;
@@ -11,7 +12,7 @@ $loadError = null;
 if ($id !== false && $id !== null && $id > 0) {
     try {
         require dirname(__DIR__) . '/config/database.php';
-        $barang = detailBarang($pdo, $id);
+        $barang = detailBarang($pdo, $id, $userId);
     } catch (PDOException $exception) {
         error_log('Gagal memuat detail barang: ' . $exception->getMessage());
         $loadError = databaseErrorMessage($exception, 'Detail barang gagal dimuat. Periksa koneksi database.');
