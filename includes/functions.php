@@ -86,14 +86,18 @@ function formatRupiah(string|int|float|null $amount): string
     return 'Rp ' . number_format((float) $amount, 0, ',', '.');
 }
 
+function hitungSubtotal(int|float|string $stok, int|float|string $harga): float
+{
+    return round((int) $stok * (float) $harga, 2);
+}
+
 function hitungTotalBarang(array $daftarBarang): array
 {
     $totalStok = 0;
     $totalNilai = 0.0;
     foreach ($daftarBarang as $barang) {
-        $stok = (int) ($barang['stok'] ?? 0);
-        $totalStok += $stok;
-        $totalNilai += $stok * (float) ($barang['harga'] ?? 0);
+        $totalStok += (int) ($barang['stok'] ?? 0);
+        $totalNilai += hitungSubtotal($barang['stok'] ?? 0, $barang['harga'] ?? 0);
     }
 
     return [

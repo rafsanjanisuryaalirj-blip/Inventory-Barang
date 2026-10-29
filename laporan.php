@@ -35,7 +35,7 @@ require __DIR__ . '/includes/header.php';
 <?php if ($loadError !== null): ?>
     <div class="alert alert-danger"><?= e($loadError) ?></div>
 <?php else: ?>
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="report-toolbar">
         <form class="filter-panel" method="get" action="<?= e(appUrl('/laporan.php')) ?>">
             <select class="form-select category-select" id="kategori" name="kategori" aria-label="Filter kategori" data-auto-submit>
                 <option value="">Semua kategori</option>
@@ -45,12 +45,14 @@ require __DIR__ . '/includes/header.php';
             </select>
             <?php if ($categoryId !== ''): ?><a class="btn btn-secondary btn-reset" href="<?= e(appUrl('/laporan.php')) ?>">Reset</a><?php endif; ?>
         </form>
-        <a class="btn btn-primary" href="<?= e($pdfUrl) ?>" target="_blank" rel="noopener"><i class="bi bi-file-earmark-pdf"></i>Cetak PDF</a>
     </div>
     <section class="stats-grid" aria-label="Ringkasan laporan">
         <article class="stat-card"><strong><?= number_format($totals['jumlah_baris']) ?></strong><span class="stat-label">Jumlah Barang</span></article>
         <article class="stat-card"><strong><?= number_format($totals['total_stok']) ?></strong><span class="stat-label">Total Stok</span></article>
         <article class="stat-card"><strong><?= e(formatRupiah($totals['total_nilai'])) ?></strong><span class="stat-label">Total Nilai Inventaris</span></article>
+        <div class="report-action">
+            <a class="btn btn-primary btn-pdf" href="<?= e($pdfUrl) ?>" target="_blank" rel="noopener"><i class="bi bi-file-earmark-pdf"></i>Cetak PDF</a>
+        </div>
     </section>
     <section class="panel-card">
         <div class="panel-heading"><h2>Daftar barang</h2><span><?= number_format($totals['jumlah_baris']) ?> baris</span></div>
@@ -59,17 +61,17 @@ require __DIR__ . '/includes/header.php';
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table app-table align-middle mb-0">
-                    <thead><tr><th>No</th><th>Kode</th><th>Nama Barang</th><th>Kategori</th><th>Stok</th><th>Harga</th><th>Subtotal</th></tr></thead>
+                    <thead><tr><th>No</th><th>Kode</th><th>Nama Barang</th><th>Kategori</th><th>Stok</th><th>Harga / Satuan</th><th>Subtotal (Stok × Harga)</th></tr></thead>
                     <tbody>
                         <?php foreach ($barangList as $index => $barang): ?>
-                            <?php $subtotal = (int) $barang['stok'] * (float) $barang['harga']; ?>
+                            <?php $subtotal = hitungSubtotal($barang['stok'], $barang['harga']); ?>
                             <tr>
                                 <td><?= $index + 1 ?></td>
                                 <td><?= e($barang['kode_barang']) ?></td>
                                 <td><?= e($barang['nama_barang']) ?></td>
                                 <td><?= e($barang['nama_kategori']) ?></td>
                                 <td><?= e($barang['stok']) ?> <?= e($barang['satuan']) ?></td>
-                                <td><?= e(formatRupiah($barang['harga'])) ?></td>
+                                <td><?= e(formatRupiah($barang['harga'])) ?> / <?= e($barang['satuan']) ?></td>
                                 <td class="fw-semibold"><?= e(formatRupiah($subtotal)) ?></td>
                             </tr>
                         <?php endforeach; ?>

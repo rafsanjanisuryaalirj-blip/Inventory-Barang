@@ -53,7 +53,7 @@ $headers = [
     'Kategori' => 45,
     'Stok' => 15,
     'Satuan' => 22,
-    'Harga' => 30,
+    'Harga/Satuan' => 30,
     'Subtotal' => 37,
 ];
 
@@ -61,7 +61,7 @@ $pdf->SetFont('Arial', 'B', 9);
 $pdf->SetFillColor(31, 58, 99);
 $pdf->SetTextColor(255, 255, 255);
 foreach ($headers as $label => $width) {
-    $align = in_array($label, ['Stok', 'Harga', 'Subtotal'], true) ? 'R' : 'C';
+    $align = in_array($label, ['Stok', 'Harga/Satuan', 'Subtotal'], true) ? 'R' : 'C';
     $pdf->Cell($width, 8, teksLatin($label), 1, 0, $align, true);
 }
 $pdf->Ln();
@@ -72,7 +72,7 @@ if ($barangList === []) {
     $pdf->Cell(267, 8, teksLatin('Belum ada data barang.'), 1, 1, 'C');
 } else {
     foreach ($barangList as $index => $barang) {
-        $subtotal = (int) $barang['stok'] * (float) $barang['harga'];
+        $subtotal = hitungSubtotal($barang['stok'], $barang['harga']);
         $pdf->Cell(10, 7, (string) ($index + 1), 1, 0, 'C');
         $pdf->Cell(30, 7, teksLatin($barang['kode_barang']), 1);
         $pdf->Cell(78, 7, teksLatin(potongTeks($barang['nama_barang'], 46)), 1);
@@ -97,5 +97,6 @@ $pdf->Ln(10);
 $pdf->SetFont('Arial', '', 9);
 $pdf->SetTextColor(100, 116, 139);
 $pdf->Cell(0, 6, teksLatin('Total nilai inventaris: ' . formatRupiah($totals['total_nilai'])), 0, 1, 'L');
+$pdf->Cell(0, 6, teksLatin('Keterangan: subtotal = stok x harga per satuan.'), 0, 1, 'L');
 
 $pdf->Output('I', 'laporan-inventaris-' . date('Ymd') . '.pdf');
