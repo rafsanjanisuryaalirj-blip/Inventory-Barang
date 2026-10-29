@@ -1,0 +1,14 @@
+# Foto unggahan pengguna
+img/barang/*
+!img/barang/.gitkeep
+
+# Berkas sistem dan editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.log
+
+# Artefak bantu
+.playwright-mcp/
