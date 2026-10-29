@@ -561,8 +561,16 @@ button:focus-visible {
 }
 
 .report-action .btn {
+    width: 100%;
+    max-width: 240px;
     min-width: 0;
-    height: 40px;
+    height: 56px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.report-action .btn i {
+    font-size: 18px;
 }
 
 .stat-card {
