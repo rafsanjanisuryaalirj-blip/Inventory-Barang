@@ -6,9 +6,9 @@ Aplikasi inventaris barang untuk PHP Native 8+, PDO, MySQL, Bootstrap 5, dan Jav
 
 1. Letakkan folder proyek di `C:\xampp\htdocs\inventory`.
 2. Jalankan Apache dan MySQL dari XAMPP Control Panel.
-3. Buka phpMyAdmin, pilih **Import**, lalu impor `database.sql`. SQL membuat database `db_inventory`, tabel `users`, `kategori`, `barang`, serta kategori awal. Tidak ada akun bawaan; akun pertama dibuat melalui halaman registrasi. Tabel `barang` menyimpan `id_user`, sehingga data setiap akun terpisah. Jika database lama sudah memiliki tabel `barang` tanpa kolom `id_user`, hapus tabel `barang` lama lalu impor ulang `database.sql`.
-4. Periksa [config/database.php](./config/database.php). Nilai default XAMPP: host `localhost`, database `db_inventory`, user `root`, password kosong, port `3306`, charset `utf8mb4`. Nilai dapat dioverride melalui environment variable `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, dan `DB_PORT`.
-5. Jika tabel lama Anda berada di database bernama `database`, ubah `DB_NAME` menjadi `database` dan ubah perintah `USE db_inventory;` di `database.sql` menjadi `USE \`database\`;` sebelum mengimpor. SQL tidak menghapus tabel/barang lama; tabel `users` dan kategori akan ditambahkan jika belum ada.
+3. Buka phpMyAdmin, pilih **Import**, lalu impor `database.sql`. SQL membuat database `database`, tabel `users`, `kategori`, `barang`, serta kategori awal. Tidak ada akun bawaan; akun pertama dibuat melalui halaman registrasi. Tabel `barang` menyimpan `id_user`, sehingga data setiap akun terpisah. Jika database lama sudah memiliki tabel `barang` tanpa kolom `id_user`, hapus tabel `barang` lama lalu impor ulang `database.sql`.
+4. Periksa [config/database.php](./config/database.php). Nilai default XAMPP: host `localhost`, database `database`, user `root`, password kosong, port `3306`, charset `utf8mb4`. Nilai dapat dioverride melalui environment variable `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, dan `DB_PORT`.
+5. Nama database default aplikasi adalah `database`. Jika memakai nama lain, set environment variable `DB_NAME` dan sesuaikan `USE` pada `database.sql`.
 6. Pastikan PHP mengaktifkan `PDO_MYSQL` dan `fileinfo`. Untuk pesan teknis koneksi hanya di komputer pengembangan, set environment `APP_ENV=development`. Jangan aktifkan mode ini pada server publik. Default aman tidak menampilkan detail exception ke pengguna.
 7. Pastikan Apache memiliki izin tulis ke `img/barang/`. Foto maksimal 2 MB; `upload_max_filesize` dan `post_max_size` pada `php.ini` harus mencukupi. Restart Apache setelah mengubah PHP configuration.
 8. Akses `http://localhost/inventory/`. Bootstrap, Bootstrap Icons, dan Inter dimuat dari CDN.
@@ -16,7 +16,7 @@ Aplikasi inventaris barang untuk PHP Native 8+, PDO, MySQL, Bootstrap 5, dan Jav
 ### Jika koneksi database gagal
 
 - Pastikan MySQL berstatus aktif di XAMPP.
-- Pastikan `DB_NAME` sama dengan database tempat tabel diimpor; nama database default aplikasi adalah `db_inventory`.
+- Pastikan `DB_NAME` sama dengan database tempat tabel diimpor; nama database default aplikasi adalah `database`.
 - Cocokkan host, port (`3306`), username, dan password dengan konfigurasi MySQL setempat.
 - Pastikan `PDO_MYSQL` aktif, lalu restart Apache setelah mengubah `php.ini`.
 - Pastikan database berisi tabel `users`, `kategori`, dan `barang`; impor `database.sql` jika belum.

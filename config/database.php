@@ -7,7 +7,7 @@ if (!defined('INVENTORY_APP')) {
 }
 
 $host = getenv('DB_HOST') ?: 'localhost';
-$database = getenv('DB_NAME') ?: 'db_inventory';
+$database = getenv('DB_NAME') ?: 'database';
 $username = getenv('DB_USER') ?: 'root';
 $password = getenv('DB_PASSWORD') ?: '';
 $port = getenv('DB_PORT') ?: '3306';

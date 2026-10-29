@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS db_inventory
+CREATE DATABASE IF NOT EXISTS `database`
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE db_inventory;
+USE `database`;
 
 CREATE TABLE IF NOT EXISTS users (
     id_user INT UNSIGNED NOT NULL AUTO_INCREMENT,
